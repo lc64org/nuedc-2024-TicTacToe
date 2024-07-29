@@ -125,6 +125,9 @@ class TicTacToe:
 				if (row, col, -1, self.human) not in to_move_actions:
 					to_move_actions.append((row, col, -1, self.human))
 
+		if is_valid:
+			self._board = new_board[:]
+
 		return is_valid, to_move_actions if is_valid else None
 
 	def force_update_board(self, new_board):
