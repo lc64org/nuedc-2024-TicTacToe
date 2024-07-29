@@ -128,7 +128,7 @@ class TicTacToe:
 		if is_valid:
 			self._board = new_board[:]
 
-		return is_valid, to_move_actions if is_valid else None
+		return is_valid, None if is_valid else to_move_actions
 
 	def force_update_board(self, new_board):
 		"""强制刷新棋盘"""
@@ -153,9 +153,77 @@ class TicTacToe:
 		if blocking_move:
 			return blocking_move
 
+		# # 检测人类是否第一步占据角落
+		# # 先检测是否是第二步
+		# if sum(sum(cell != 0 for cell in row) for row in self._board) == 1:
+		# 	# 再检测是否占据了角落
+		# 	if self._board[0][0] == self.human or self._board[0][2] == self.human or self._board[2][0] == self.human or self._board[2][2] == self.human:
+		# 		# 如果是，电脑占据人类对角
+		# 		if self._board[0][0] == self.human:
+		# 			return (2, 2)
+		# 		elif self._board[0][2] == self.human:
+		# 			return (2, 0)
+		# 		elif self._board[2][0] == self.human:
+		# 			return (0, 2)
+		# 		elif self._board[2][2] == self.human:
+		# 			return (0, 0)
+
 		# 如果中心格子为空,优先占据中心
 		if self._board[1][1] == 0:
 			return (1, 1)
+
+		# 检测是否是第四步
+		if sum(sum(cell != 0 for cell in row) for row in self._board) == 3:
+			# 检测是否是棱+对角
+			if self._board[0][1] == self.human:
+				if self._board[2][0] == self.human:
+					if self._board[0][0] == 0:
+						return (0, 0)
+				elif self._board[2][2] == self.human:
+					if self._board[0][2] == 0:
+						return (0, 2)
+			elif self._board[1][0] == self.human:
+				if self._board[0][2] == self.human:
+					if self._board[0][0] == 0:
+						return (0, 0)
+				elif self._board[2][2] == self.human:
+					if self._board[2][0] == 0:
+						return (2, 0)
+			elif self._board[1][2] == self.human:
+				if self._board[0][0] == self.human:
+					if self._board[0][2] == 0:
+						return (0, 2)
+				elif self._board[2][0] == self.human:
+					if self._board[2][2] == 0:
+						return (2, 2)
+			elif self._board[2][1] == self.human:
+				if self._board[0][0] == self.human:
+					if self._board[2][0] == 0:
+						return (2, 0)
+				elif self._board[0][2] == self.human:
+					if self._board[2][2] == 0:
+						return (2, 2)
+
+			# 检测是否是电脑中心
+			if self._board[1][1] == self.computer:
+				# 检测是否是对角
+				edges = [(0,1), (1,0), (1,2), (2,1)]
+				if self._board[0][0] == self.human and self._board[2][2] == self.human:
+					return random.choice(edges)
+				elif self._board[0][2] == self.human and self._board[2][0] == self.human:
+					return random.choice(edges)
+
+				# 再检测是否是相邻的棱
+				if self._board[0][1] == self.human and self._board[1][0] == self.human:
+					return (0, 0)
+				elif self._board[0][1] == self.human and self._board[1][2] == self.human:
+					return (0, 2)
+				elif self._board[1][0] == self.human and self._board[2][1] == self.human:
+					return (2, 0)
+				elif self._board[1][2] == self.human and self._board[2][1] == self.human:
+					return (2, 2)
+
+
 
 		# 尝试占据角落或边缘，加入随机性
 		empty_positions = []
@@ -224,23 +292,23 @@ class TicTacToe:
 		"""获取当前棋盘状态"""
 		return [row[:] for row in self._board]
 
-	def print_board(self):
+	def print_board(self, file=None):
 		"""打印棋盘"""
 
 		def to_char(cell):
 			return "X" if cell == 1 else "O" if cell == -1 else " "
 
-		print("  0 1 2")
+		print("  0 1 2", file=file)
 		for i, row in enumerate(self._board):
-			print(i, end=" ")
+			print(i, end=" ", file=file)
 			for cell in row:
-				print(to_char(cell), end=" ")
-			print()
+				print(to_char(cell), end=" ", file=file)
+			print(file=file)
 
 
 
 if __name__ == "__main__":
-	# 初始化 DeepSeek 三子棋 AI
+	# 初始化三子棋
 	ttt = TicTacToe()
 
 	first = input("1 -> 电脑先手；-1 -> 玩家先手：")
@@ -263,7 +331,7 @@ if __name__ == "__main__":
 				except ValueError:
 					print("请输入有效的数字。")
 		else:
-			# AI 回合
+			# 电脑回合
 			move = ttt.auto_move()
 			if move:
 				row, col = move
@@ -281,7 +349,7 @@ if __name__ == "__main__":
 		winner = ttt.check_winner()
 		if winner != 0:
 			ttt.print_board()
-			print("玩家获胜！" if winner == -1 else "AI 获胜！")
+			print("玩家获胜！" if winner == -1 else "电脑获胜！")
 			break
 
 		# 检查是否平局
@@ -293,4 +361,4 @@ if __name__ == "__main__":
 		# 切换玩家
 		player = -player
 
-	print("游戏结束！")
+	# print("游戏结束！")
