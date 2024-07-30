@@ -29,7 +29,7 @@ class TestAutoMove(unittest.TestCase):
         4. 打印棋盘并断言为平局
         5. 运行 100 次,结果输出到 log 文件
         """
-        filename = f"auto_test_{self.thread_number}_{str(datetime.now())[:19]}.log".replace(" ", "_").replace(":", "-")
+        filename = f"auto_test_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_{self.thread_number}.log"
         with open(
             filename,
             "w",
@@ -40,7 +40,7 @@ class TestAutoMove(unittest.TestCase):
                 ttt = TicTacToe()
 
                 # 初始化当前玩家
-                current_player = 1
+                current_player = 1 if randint(0, 1) == 0 else -1
                 is_auto = False
 
                 # 游戏循环
