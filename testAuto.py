@@ -27,7 +27,7 @@ class TestAutoMove(unittest.TestCase):
         2. 让它们交替执行 auto_move
         3. 对另一个执行 manual_move 进行同步
         4. 打印棋盘并断言为平局
-        5. 运行 100 次,结果输出到 log 文件
+        5. 运行 100000 次,结果输出到 log 文件
         """
         filename = f"auto_test_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_{self.thread_number}.log"
         with open(
@@ -107,7 +107,7 @@ def run_tests_in_thread(thread_number):
 
 if __name__ == "__main__":
     threads = []
-    for _ in range(10):
+    for _ in range(2):
         thread_number = get_thread_number()
         t = threading.Thread(target=run_tests_in_thread, args=(thread_number,))
         threads.append(t)
